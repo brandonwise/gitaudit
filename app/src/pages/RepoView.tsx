@@ -4,19 +4,24 @@ import { parseGitHubUrl, fetchRepoInfo, fetchCommits, type RepoInfo, type Commit
 import { Timeline } from '../components/viz/Timeline'
 import { ContributorList } from '../components/viz/ContributorList'
 import { FileList } from '../components/viz/FileList'
+import { SecurityView } from '../components/security/SecurityView'
+import { parsePackageJson, type Dependency } from '../lib/deps'
+import { useSecurityStore } from '../stores/securityStore'
 
 interface RepoViewProps {
   url: string
 }
 
-type Tab = 'activity' | 'files' | 'contributors'
+type Tab = 'activity' | 'security' | 'files' | 'contributors'
 
 export function RepoView({ url }: RepoViewProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [repo, setRepo] = useState<RepoInfo | null>(null)
   const [commits, setCommits] = useState<Commit[]>([])
+  const [dependencies, setDependencies] = useState<Dependency[]>([])
   const [tab, setTab] = useState<Tab>('activity')
+  const resetSecurityStore = useSecurityStore(state => state.reset)
 
   const parsed = parseGitHubUrl(url)
 
@@ -27,6 +32,9 @@ export function RepoView({ url }: RepoViewProps) {
       return
     }
 
+    // Reset security store on new repo
+    resetSecurityStore()
+    
     async function load() {
       try {
         const [repoData, commitData] = await Promise.all([
@@ -35,6 +43,20 @@ export function RepoView({ url }: RepoViewProps) {
         ])
         setRepo(repoData)
         setCommits(commitData)
+        
+        // Try to fetch package.json for dependencies
+        try {
+          const pkgRes = await fetch(
+            `https://raw.githubusercontent.com/${parsed!.owner}/${parsed!.repo}/HEAD/package.json`
+          )
+          if (pkgRes.ok) {
+            const pkgContent = await pkgRes.text()
+            const parsed = parsePackageJson(pkgContent)
+            setDependencies(parsed.dependencies)
+          }
+        } catch {
+          // No package.json, that's fine
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Failed to load repository')
       } finally {
@@ -43,7 +65,7 @@ export function RepoView({ url }: RepoViewProps) {
     }
 
     load()
-  }, [url])
+  }, [url, resetSecurityStore])
 
   if (loading) {
     return <LoadingState />
@@ -87,6 +109,11 @@ export function RepoView({ url }: RepoViewProps) {
           <TabButton active={tab === 'activity'} onClick={() => setTab('activity')}>
             Activity
           </TabButton>
+          <TabButton active={tab === 'security'} onClick={() => setTab('security')}>
+            <span className="flex items-center gap-1">
+              🛡️ Security
+            </span>
+          </TabButton>
           <TabButton active={tab === 'files'} onClick={() => setTab('files')}>
             Hot Files
           </TabButton>
@@ -103,6 +130,14 @@ export function RepoView({ url }: RepoViewProps) {
           transition={{ duration: 0.2 }}
         >
           {tab === 'activity' && <Timeline commits={commits} />}
+          {tab === 'security' && (
+            <SecurityView 
+              commits={commits} 
+              dependencies={dependencies}
+              repoOwner={repo.owner}
+              repoName={repo.name}
+            />
+          )}
           {tab === 'files' && <FileList commits={commits} />}
           {tab === 'contributors' && <ContributorList commits={commits} />}
         </motion.div>

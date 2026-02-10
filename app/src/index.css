@@ -28,6 +28,19 @@
   --color-error: #ef4444;
   --color-info: #3b82f6;
   
+  /* Security Risk Colors */
+  --color-risk-critical: #ff4444;
+  --color-risk-high: #ff8c00;
+  --color-risk-medium: #ffcc00;
+  --color-risk-low: #44cc44;
+  --color-risk-info: #4488ff;
+  
+  /* Glow Effects */
+  --glow-critical: 0 0 20px rgba(255, 68, 68, 0.6);
+  --glow-high: 0 0 15px rgba(255, 140, 0, 0.5);
+  --glow-medium: 0 0 10px rgba(255, 204, 0, 0.4);
+  --glow-safe: 0 0 20px rgba(68, 204, 68, 0.4);
+  
   /* Author colors — Distinct, colorblind-friendly */
   --color-author-1: #f472b6;
   --color-author-2: #38bdf8;
@@ -105,3 +118,45 @@ code, pre {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-subtle);
 }
+
+/* Security-specific animations */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 10px currentColor; }
+  50% { box-shadow: 0 0 25px currentColor; }
+}
+
+@keyframes radar-sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-radar {
+  animation: radar-sweep 4s linear infinite;
+}
+
+/* Three.js canvas styling */
+canvas {
+  outline: none;
+}
+
+/* Glassmorphism panels */
+.glass {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Risk level text utilities */
+.text-risk-critical { color: var(--color-risk-critical); }
+.text-risk-high { color: var(--color-risk-high); }
+.text-risk-medium { color: var(--color-risk-medium); }
+.text-risk-low { color: var(--color-risk-low); }
+
+.bg-risk-critical { background-color: rgba(255, 68, 68, 0.15); }
+.bg-risk-high { background-color: rgba(255, 140, 0, 0.15); }
+.bg-risk-medium { background-color: rgba(255, 204, 0, 0.15); }
+.bg-risk-low { background-color: rgba(68, 204, 68, 0.15); }
