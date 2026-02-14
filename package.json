@@ -1,11 +1,11 @@
 {
-  "name": "git-time-machine",
-  "version": "2.0.0",
-  "description": "Understand any Git repository — visualize history, detect duplicates, find stale flags, analyze bloat",
+  "name": "gitpulse",
+  "version": "1.0.0",
+  "description": "Git repository health check — detect duplicate authors, find stale flags, analyze bloat, visualize history",
   "type": "module",
   "bin": {
-    "gtm": "./cli/index.js",
-    "git-time-machine": "./cli/index.js"
+    "gitpulse": "./cli/index.js",
+    "gp": "./cli/index.js"
   },
   "main": "./cli/index.js",
   "exports": {
@@ -36,7 +36,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/brandonwise/git-time-machine.git"
+    "url": "https://github.com/brandonwise/gitpulse.git"
+  },
+  "homepage": "https://github.com/brandonwise/gitpulse#readme",
+  "bugs": {
+    "url": "https://github.com/brandonwise/gitpulse/issues"
   },
   "engines": {
     "node": ">=18.0.0"

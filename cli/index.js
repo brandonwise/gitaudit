@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * Git Time Machine — Unified CLI
+ * gitpulse — Git Repository Health Check
  * 
- * One tool to understand any Git repository.
+ * Detect duplicate authors, find stale flags, analyze bloat, visualize history.
  */
 
 import { program } from 'commander';
@@ -14,11 +14,11 @@ import { bloatCommand } from './commands/bloat.js';
 import { visualizeCommand } from './commands/visualize.js';
 import { ciCommand } from './commands/ci.js';
 
-const VERSION = '2.0.0';
+const VERSION = '1.0.0';
 
 program
-  .name('gtm')
-  .description('Git Time Machine — Understand any Git repository')
+  .name('gitpulse')
+  .description('Git repository health check — authors, flags, bloat, security')
   .version(VERSION);
 
 // Full analysis
